@@ -13,7 +13,7 @@ class ViewController: UIViewController {
     
     @IBAction func onGetTapped(_ sender: Any) {
         
-        guard let url = URL(string: "ec2-54-202-22-175.us-west-2.compute.amazonaws.com:8081/listUsers") else { return }
+        guard let url = URL(string: "http://ec2-54-202-22-175.us-west-2.compute.amazonaws.com:8081/listUsers") else { return }
         
         let session = URLSession.shared
         session.dataTask(with: url) { (data, response, error) in
@@ -39,17 +39,27 @@ class ViewController: UIViewController {
         
         //let parameters = ["username": "@kilo_loco", "tweet": "HelloWorld"]
         
-        guard let url = URL(string: "ec2-54-202-22-175.us-west-2.compute.amazonaws.com:8081/addUser") else { return }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
+        guard let url = URL(string: "http://ec2-54-202-22-175.us-west-2.compute.amazonaws.com:8081/addUser") else { return }
+     
         //request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         //guard let httpBody = try? JSONSerialization.data(withJSONObject: parameters, options: []) else { return }
         //request.httpBody = httpBody
+        let sessionConfig = URLSessionConfiguration.default
         
-        let session = URLSession.shared
-        session.dataTask(with: request) { (data, response, error) in
+        let session = URLSession(configuration:sessionConfig)
+        var request = URLRequest(url:url)
+        request.httpMethod = "POST"
+        
+        let task = session.dataTask(with: request) { (data, response, error) in
+            
+       
+            
             if let response = response {
                 print(response)
+            }
+            
+            if let statusCode = (response as? HTTPURLResponse)?.statusCode{
+                print(statusCode)
             }
             
             if let data = data {
@@ -62,7 +72,9 @@ class ViewController: UIViewController {
                 }
             }
             
-        }.resume()
+        }
+        
+        task.resume()
         
     }
     
